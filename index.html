@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIC 01 — Física de Dispositivos Semicondutores | Estudo Interativo P2</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- KaTeX para renderização matemática impecável -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-badge">PROGRAMA DE PÓS-GRADUAÇÃO EM MICROELETRÔNICA • MIC 01 (P2)</div>
+    <h1>Física de Dispositivos Semicondutores — Portal Interativo</h1>
+    <p>
+      Guia visual e interativo completo baseado nas <strong>Aulas 8 a 14</strong> e no livro
+      <em>Semiconductor Devices</em> (<strong>Kanaan Kano</strong>), com resolução passo a passo de todas as questões da
+      <strong>Lista 2</strong> e da <strong>Lista 3</strong>, animações em <strong>Python (GIFs)</strong> e
+      <strong>4 Simuladores Físicos em JavaScript (60 FPS)</strong>.
+    </p>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="tab-simuladores" onclick="switchMainTab('tab-simuladores', this)">
+        ⚡ 1. Simuladores Interativos (JS)
+      </button>
+      <button class="tab-btn" data-tab="tab-lista2" onclick="switchMainTab('tab-lista2', this)">
+        📘 2. Lista 2 Resolvida (Junção PN)
+      </button>
+      <button class="tab-btn" data-tab="tab-lista3" onclick="switchMainTab('tab-lista3', this)">
+        📙 3. Lista 3 Resolvida (Schottky &amp; MOS)
+      </button>
+      <button class="tab-btn" data-tab="tab-resumo" onclick="switchMainTab('tab-resumo', this)">
+        🧭 4. Resumo Teórico &amp; Formulário (Aulas 8–14)
+      </button>
+      <button class="tab-btn" data-tab="tab-python" onclick="switchMainTab('tab-python', this)">
+        🐍 5. Galeria de Animações Python
+      </button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ================================================================== -->
+    <!-- ABA 1: SIMULADORES INTERATIVOS EM JAVASCRIPT (60 FPS)              -->
+    <!-- ================================================================== -->
+    <section id="tab-simuladores" class="tab-section active">
+      <div class="card">
+        <h2>⚡ Laboratório Virtual de Semicondutores (JavaScript 60 FPS)</h2>
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+          Escolha um dos 4 simuladores abaixo ou clique nos <strong>Botões de Questões (Presets)</strong> para carregar
+          instantaneamente os parâmetros exatos de cada exercício da <strong>Lista 2</strong> e da <strong>Lista 3</strong>!
+        </p>
+
+        <div class="sim-nav">
+          <button class="sim-tab-btn active" data-sim="1" onclick="switchSimTab(1, this)">
+            1. Junção PN: Depleção, Campo $\mathcal{E}(x)$ e Bandas (Lista 2: Q1, Q2d, Q3)
+          </button>
+          <button class="sim-tab-btn" data-sim="2" onclick="switchSimTab(2, this)">
+            2. Injeção de Minoritários, Corrente $I$-$V$ e Capacitância $C_j$ (Lista 2: Q2, Q4)
+          </button>
+          <button class="sim-tab-btn" data-sim="3" onclick="switchSimTab(3, this)">
+            3. Diodo Schottky Metal/Semicondutor (Lista 3: Q1, Q2, Q3)
+          </button>
+          <button class="sim-tab-btn" data-sim="4" onclick="switchSimTab(4, this)">
+            4. Capacitor MOS Completo: Bandas, Campo no Óxido e $C$-$V$ (Lista 3: Q4, Q5, Q6, Q7)
+          </button>
+        </div>
+
+        <!-- SIMULADOR 1 -->
+        <div id="sim-panel-1" class="sim-panel active">
+          <div class="preset-bar">
+            <strong style="color: var(--accent-amber); font-size: 0.88rem;">Carregar Questão da Lista 2:</strong>
+            <button class="preset-btn" onclick="applyPreset('L2Q1')">🎯 Lista 2 - Questão 1 (Ge: $V_{bi}=0,298\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q2d')">🎯 Lista 2 - Questão 2d (Si $n^+p$ em $V_a=-0,5\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q3_eq')">🎯 Lista 2 - Questão 3 (Equilíbrio: $-16\text{ kV/cm}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q3_bias')">🎯 Lista 2 - Questão 3 (Polarizado: $V_a=+0,60\text{ V} \to -8\text{ kV/cm}$)</button>
+          </div>
+
+          <div class="sim-controls">
+            <div class="control-group">
+              <label>Material / Modo de Simulação</label>
+              <select id="s1-mat">
+                <option value="Si">Silício (Si: $n_i = 10^{10}\text{ cm}^{-3}, \varepsilon_r = 11,7$)</option>
+                <option value="Ge">Germânio - Lista 2 Q1 ($n_i = 2,5\times 10^{13}\text{ cm}^{-3}$)</option>
+                <option value="Q3" selected>Modo Exato Lista 2 Q3 ($V_{bi}=0,8\text{ V}, \mathcal{E}_0=-16\text{ kV/cm}$)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Dopagem Lado P ($\log_{10} N_A$) <span class="val" id="s1-logNA-val">10^16.00 cm⁻³</span></label>
+              <input type="range" id="s1-logNA" min="14" max="18.5" step="0.01" value="16.0" />
+            </div>
+            <div class="control-group">
+              <label>Dopagem Lado N ($\log_{10} N_D$) <span class="val" id="s1-logND-val">10^18.00 cm⁻³</span></label>
+              <input type="range" id="s1-logND" min="14" max="18.5" step="0.01" value="18.0" />
+            </div>
+            <div class="control-group">
+              <label>Tensão Aplicada ($V_a$) <span class="val" id="s1-Va-val">+0.00 V</span></label>
+              <input type="range" id="s1-Va" min="-1.50" max="0.70" step="0.01" value="0.00" />
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="canvas-sim-1" class="sim-canvas" width="1150" height="460"></canvas>
+          </div>
+
+          <div class="readout-grid">
+            <div class="readout-item">
+              <span class="lbl">Potencial Intríns. (Built-in $V_{bi}$)</span>
+              <span class="num" id="r1-Vbi">0.8000 V</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Barreira Resultante ($V_j = V_{bi} - V_a$)</span>
+              <span class="num" id="r1-Vj">0.8000 V</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Largura da Depleção ($W = x_p + x_n$)</span>
+              <span class="num" id="r1-W">1.0000 µm</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Campo Elétrico de Pico ($\mathcal{E}_{max}$)</span>
+              <span class="num" id="r1-Emax">-16.00 kV/cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR 2 -->
+        <div id="sim-panel-2" class="sim-panel">
+          <div class="preset-bar">
+            <strong style="color: var(--accent-amber); font-size: 0.88rem;">Carregar Questão da Lista 2:</strong>
+            <button class="preset-btn" onclick="applyPreset('L2Q2_dir')">🎯 Lista 2 - Q2b (Polarização Direta $V_a = +0,50\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q2_rev')">🎯 Lista 2 - Q2c/d (Polarização Reversa $V_a = -0,50\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q4_p1')">🎯 Lista 2 - Q4 Ponto 1 ($V_a = -4,30\text{ V} \to C_j = 20\text{ pF}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L2Q4_p2')">🎯 Lista 2 - Q4 Ponto 2 ($V_a = -0,55\text{ V} \to C_j = 40\text{ pF}$)</button>
+          </div>
+
+          <div class="sim-controls">
+            <div class="control-group">
+              <label>Tensão $V_a$ no Diodo $n^+p$ (Questão 2) <span class="val" id="s2-Va-val">+0.50 V</span></label>
+              <input type="range" id="s2-Va" min="-0.80" max="0.65" step="0.01" value="0.50" />
+            </div>
+            <div class="control-group">
+              <label>Tensão Reversa $V_a$ no Diodo $P^+N$ (Questão 4 - Capacitância) <span class="val" id="s2-Va-cap-val">-0.55 V</span></label>
+              <input type="range" id="s2-Va-cap" min="-4.80" max="0.30" step="0.05" value="-0.55" />
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="canvas-sim-2" class="sim-canvas" width="1150" height="430"></canvas>
+          </div>
+
+          <div class="readout-grid">
+            <div class="readout-item">
+              <span class="lbl">Corrente Reversa Saturação ($I_S$ - Q2a)</span>
+              <span class="num" id="r2-Is">1.127e-15 A</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Corrente Total no Diodo ($I$ - Q2b/c)</span>
+              <span class="num" id="r2-Id">2.810e-7 A</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Largura de Depleção ($W$ - Q2d)</span>
+              <span class="num" id="r2-W2">0.4176 µm</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Capacitância da Junção ($C_j$ - Q4)</span>
+              <span class="num" id="r2-Cj">40.00 pF</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR 3 -->
+        <div id="sim-panel-3" class="sim-panel">
+          <div class="preset-bar">
+            <strong style="color: var(--accent-amber); font-size: 0.88rem;">Carregar Questão da Lista 3:</strong>
+            <button class="preset-btn" onclick="applyPreset('L3Q1_ini')">🎯 Lista 3 - Q1 Inicial ($N_D = 10^{15}\text{ cm}^{-3} \to V_{bi}=0,40\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q1_fim')">🎯 Lista 3 - Q1 Alterada ($N_D = 4,8\times 10^{15}\text{ cm}^{-3} \to V_{bi}\uparrow$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q2a')">🎯 Lista 3 - Q2a (Direta $V_a = +0,20\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q2b')">🎯 Lista 3 - Q2b (Reversa $V_R = 5\text{ V} / V_a = -5\text{ V}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q3_300')">🎯 Lista 3 - Q3 a $300\text{ K}$ ($V_D=0,20\text{ V} \to 100\text{ mA}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q3_358')">🎯 Lista 3 - Q3 a $85^\circ\text{C}$ ($V_D=0,141\text{ V} \to 100\text{ mA}$)</button>
+          </div>
+
+          <div class="sim-controls">
+            <div class="control-group">
+              <label>Eletrodo Metálico ($q\varphi_m$ - Aula 14 Slide 19)</label>
+              <select id="s3-metal">
+                <option value="Q12" selected>Metal das Questões 1 e 2 ($q\varphi_B = 0,65\text{ eV}$)</option>
+                <option value="Cr">Cromo - Cr ($q\varphi_m = 4,50\text{ eV} \to q\varphi_B = 0,45\text{ eV}$ - Q3)</option>
+                <option value="Al">Alumínio - Al ($q\varphi_m = 4,10\text{ eV}$)</option>
+                <option value="Ni">Níquel - Ni ($q\varphi_m = 5,15\text{ eV}$)</option>
+                <option value="PtSi">Siliceto de Platina - PtSi ($q\varphi_m = 5,40\text{ eV}$)</option>
+                <option value="Pt">Platina - Pt ($q\varphi_m = 5,70\text{ eV}$)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Dopagem do Silício Tipo N ($N_D$) <span class="val" id="s3-ND-val">1.00×10¹⁵ cm⁻³</span></label>
+              <input type="range" id="s3-ND" min="14.5" max="17.0" step="0.01" value="15.00" />
+            </div>
+            <div class="control-group">
+              <label>Tensão Aplicada ($V_a$) <span class="val" id="s3-Va-val">+0.000 V</span></label>
+              <input type="range" id="s3-Va" min="-5.00" max="0.35" step="0.001" value="0.00" />
+            </div>
+            <div class="control-group">
+              <label>Temperatura de Operação ($T$) <span class="val" id="s3-T-val">300 K (27 °C)</span></label>
+              <input type="range" id="s3-T" min="250" max="400" step="1" value="300" />
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="canvas-sim-3" class="sim-canvas" width="1150" height="430"></canvas>
+          </div>
+
+          <div class="readout-grid">
+            <div class="readout-item">
+              <span class="lbl">Barreira Metal → Semicondutor ($q\varphi_B$)</span>
+              <span class="num" id="r3-phiB">0.650 eV</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Tensão de Built-in ($V_{bi}$)</span>
+              <span class="num" id="r3-Vbi">0.4000 V</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Barreira Semicondutor → Metal ($q(V_{bi}-V_a)$)</span>
+              <span class="num" id="r3-qVd">0.400 eV</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Corrente Termiônica ($I_D$ p/ Área da Q3)</span>
+              <span class="num" id="r3-ID">0.00 mA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR 4 -->
+        <div id="sim-panel-4" class="sim-panel">
+          <div class="preset-bar">
+            <strong style="color: var(--accent-amber); font-size: 0.88rem;">Carregar Questão da Lista 3:</strong>
+            <button class="preset-btn" onclick="applyPreset('L3Q4')">🎯 Lista 3 - Q4 (Tipo N, $V_{FB}=-1\text{ V}, V_G=0\text{ V}, t_{ox}=5\text{ nm}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q5')">🎯 Lista 3 - Q5 (Porta $P^+$-Si / Substrato P $10^{16}\text{ cm}^{-3}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q6')">🎯 Lista 3 - Q6 (Tipo P, $V_T=0,25\text{ V}, V_G=5\text{ V}, t_{ox}=15\text{ nm}$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q7_acc')">🎯 Lista 3 - Q7 Acumulação ($V_G=-2\text{ V} \to C=9\text{ mF/m}^2$)</button>
+            <button class="preset-btn" onclick="applyPreset('L3Q7_inv')">🎯 Lista 3 - Q7 Inversão HF ($V_G=+2\text{ V} \to C=3\text{ mF/m}^2$)</button>
+          </div>
+
+          <div class="sim-controls">
+            <div class="control-group">
+              <label>Tipo de Dopagem do Substrato (Si)</label>
+              <select id="s4-sub">
+                <option value="P" selected>Substrato Tipo P (Lacunas majoritárias - Q5, Q6, Q7)</option>
+                <option value="N">Substrato Tipo N (Elétrons majoritários - Q4)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Material de Porta (Gate)</label>
+              <select id="s4-gate">
+                <option value="P+Si" selected>Si Fortemente Dopado c/ Boro $P^+$-Si ($5,17\text{ eV}$ - Q5)</option>
+                <option value="N+Si">Polissilício $N^+$-Si ($4,05\text{ eV}$ - Slide 19)</option>
+                <option value="Custom_VFB_minus1">Configuração Q4 ($V_{FB} = -1,0\text{ V}$)</option>
+                <option value="Q6_VT025">Configuração Q6 ($V_T = +0,25\text{ V}$)</option>
+                <option value="Al">Alumínio - Al ($4,10\text{ eV}$)</option>
+                <option value="Cr">Cromo - Cr ($4,50\text{ eV}$)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Tensão de Porta ($V_G$) <span class="val" id="s4-VG-val">+0.00 V</span></label>
+              <input type="range" id="s4-VG" min="-3.00" max="5.50" step="0.05" value="0.00" />
+            </div>
+            <div class="control-group">
+              <label>Espessura do Óxido ($t_{ox}$) <span class="val" id="s4-tox-val">15.00 nm</span></label>
+              <input type="range" id="s4-tox" min="2.0" max="40.0" step="0.01" value="15.0" />
+            </div>
+            <div class="control-group">
+              <label>Dopagem do Substrato ($\log_{10} N_{A,D}$) <span class="val" id="s4-logN-val">10^16.0 cm⁻³</span></label>
+              <input type="range" id="s4-logN" min="15.0" max="17.8" step="0.1" value="16.0" />
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="canvas-sim-4" class="sim-canvas" width="1150" height="430"></canvas>
+          </div>
+
+          <div class="readout-grid">
+            <div class="readout-item">
+              <span class="lbl">Regime de Operação Atual</span>
+              <span class="num" id="r4-regime">DEPLEÇÃO</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Diferença Função Trabalho ($q\varphi_{ms}$ - Q5)</span>
+              <span class="num" id="r4-phims">+0.2032 eV</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Campo Elétrico no Óxido ($\mathcal{E}_{ox}$ - Q4)</span>
+              <span class="num" id="r4-Eox">2.00 MV/cm</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Densidade de Portadores na Superfície (Q6)</span>
+              <span class="num" id="r4-ns">6.831e+12 cm⁻²</span>
+            </div>
+            <div class="readout-item">
+              <span class="lbl">Capacitâncias $C_{ox}$ e $C_{HF}$ (Q7)</span>
+              <span class="num" id="r4-Cox">2.30 mF/m²</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- ABA 2: LISTA DE EXERCÍCIOS 2 RESOLVIDA PASSO A PASSO               -->
+    <!-- ================================================================== -->
+    <section id="tab-lista2" class="tab-section">
+
+      <!-- QUESTÃO 1 - LISTA 2 -->
+      <div class="card">
+        <h2>📘 Lista 2 — Questão 1: Resistividade, Dopagem e Tensão de Built-in ($V_{bi}$)</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Uma junção PN abrupta é formada a $300\text{ K}$ por um material semicondutor dopado tipo $n$ com uma resistividade de $1,0\ \Omega\cdot\text{cm}$ e pelo mesmo material dopado tipo $p$ com uma resistividade de $0,1\ \Omega\cdot\text{cm}$. Qual a "built-in voltage" $V_{bi}$ deste diodo? Dados $\mu_p = 1700\text{ cm}^2\text{V}^{-1}\text{s}^{-1}$, $\mu_p = 3600\text{ cm}^2\text{V}^{-1}\text{s}^{-1}$ e $n_i = 2,5\times 10^{13}\text{ cm}^{-3}$.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 8 (Slide 1) &amp; Aula 9 (Slide 4)</span>
+          <span class="badge-ref">📚 Referência no Livro: Kanaan Kano, Cap. 4 (Eq. 4.19) e Cap. 5 (Problema 5.3, pág. 152)</span>
+          <button class="preset-btn" onclick="jumpToPreset(1, 'L2Q1')">⚡ Simular Questão 1 no Laboratório JS</button>
+        </p>
+
+        <div class="didactic-callout">
+          <strong>💡 Intuição Física &amp; Pegadinha de Prova:</strong><br/>
+          1. Quando juntamos um semicondutor Tipo P (muitas lacunas) com um Tipo N (muitos elétrons), os portadores difundem devido ao gradiente de concentração (<strong>Aula 8, Slide 1</strong>). Isso deixa íons fixos descobertos ($-qN_A$ no lado P e $+qN_D$ no lado N), criando um campo elétrico interno $\mathcal{E}$ que freia a difusão até atingir o equilíbrio térmico, estabelecendo uma barreira de potencial interna chamada <strong>tensão de built-in ($V_{bi}$)</strong>.<br/>
+          2. <strong>Observação sobre o enunciado:</strong> Note que o enunciado impresso escreveu duas vezes "$\mu_p$" ($\mu_p = 1700$ e $\mu_p = 3600$). Este exercício é a tradução direta do <strong>Problema 5.3 do livro Kanaan Kano (pág. 152)</strong>, onde o material é o <strong>Germânio (Ge)</strong> a $300\text{ K}$ ($n_i = 2,5\times 10^{13}\text{ cm}^{-3}$), cuja mobilidade de elétrons é $\mu_n = 3600\text{ cm}^2/(\text{V}\cdot\text{s})$ e a de lacunas é $\mu_p = 1700\text{ cm}^2/(\text{V}\cdot\text{s})$. <em>Curiosidade matemática incrível:</em> como $V_{bi}$ depende apenas do <strong>produto</strong> $N_A \cdot N_D = \frac{1}{q^2 \mu_n \mu_p \rho_n \rho_p}$, mesmo que alguém trocasse $\mu_n$ por $\mu_p$, o produto $N_A \cdot N_D$ e o valor final de $V_{bi}$ dão <strong>exatamente o mesmo resultado</strong>!
+        </div>
+
+        <h3>Passo 1: Encontrar as concentrações de dopantes $N_D$ e $N_A$ a partir das resistividades</h3>
+        <p>
+          Na região neutra tipo $n$, os elétrons são amplamente majoritários ($n_{0n} \approx N_D \gg p_{0n}$), e na região neutra tipo $p$, as lacunas são majoritárias ($p_{0p} \approx N_A \gg n_{0p}$). Do livro Kanaan Kano (Eq. 4.19), a condutividade $\sigma = 1/\rho$ em cada lado é:
+        </p>
+        <div class="formula-box">
+          $$\rho_n = \frac{1}{\sigma_n} \approx \frac{1}{q\,\mu_n\,N_D} \implies N_D = \frac{1}{q\,\mu_n\,\rho_n}$$
+          $$\rho_p = \frac{1}{\sigma_p} \approx \frac{1}{q\,\mu_p\,N_A} \implies N_A = \frac{1}{q\,\mu_p\,\rho_p}$$
+        </div>
+        <p>Substituindo $q = 1,6 \times 10^{-19}\text{ C}$, $\rho_n = 1,0\ \Omega\cdot\text{cm}$, $\mu_n = 3600\text{ cm}^2\text{V}^{-1}\text{s}^{-1}$, $\rho_p = 0,1\ \Omega\cdot\text{cm}$ e $\mu_p = 1700\text{ cm}^2\text{V}^{-1}\text{s}^{-1}$:</p>
+        <div class="formula-box green">
+          $$N_D = \frac{1}{(1,6\times 10^{-19}\text{ C})\times (3600\text{ cm}^2\text{V}^{-1}\text{s}^{-1})\times (1,0\ \Omega\cdot\text{cm})} = 1,7361 \times 10^{15}\text{ cm}^{-3}$$
+          $$N_A = \frac{1}{(1,6\times 10^{-19}\text{ C})\times (1700\text{ cm}^2\text{V}^{-1}\text{s}^{-1})\times (0,1\ \Omega\cdot\text{cm})} = 3,6765 \times 10^{16}\text{ cm}^{-3}$$
+        </div>
+
+        <h3>Passo 2: Calcular a tensão de built-in ($V_{bi}$)</h3>
+        <p>
+          Da <strong>Aula 9, Slide 4</strong> (obtida igualando a corrente de deriva e a corrente de difusão a zero no equilíbrio térmico, $J_p = qp\mu_p\mathcal{E} - qD_p\frac{dp}{dx} = 0$):
+        </p>
+        <div class="formula-box amber">
+          $$V_{bi} = \frac{kT}{q}\ln\left(\frac{N_A\,N_D}{n_i^2}\right)$$
+        </div>
+        <p>
+          A $T = 300\text{ K}$, a tensão térmica vale $V_t = \frac{kT}{q} = (8,62\times 10^{-5}\text{ eV/K})\times 300\text{ K} = 0,02586\text{ V}$ (ou $0,0259\text{ V}$ / $0,026\text{ V}$ conforme <strong>Aula 14, Slide 19</strong>):
+        </p>
+        <div class="formula-box green">
+          $$\frac{N_A\,N_D}{n_i^2} = \frac{(3,6765 \times 10^{16})\times (1,7361 \times 10^{15})}{(2,5 \times 10^{13})^2} = \frac{6,3828 \times 10^{31}}{6,25 \times 10^{26}} = 1,02125 \times 10^5$$
+          $$\ln(1,02125 \times 10^5) = 11,53395$$
+          $$V_{bi} = 0,02586\text{ V} \times 11,53395 = \mathbf{0,2983\text{ V}} \quad (\text{ou }\mathbf{0,2999\text{ V} \approx 0,30\text{ V}}\text{ usando } V_t = 0,026\text{ V})$$
+        </div>
+        <div class="badge-ans">✅ Resposta Final (Q1): $V_{bi} \approx 0,298\text{ V}$ (ou $0,30\text{ V}$)</div>
+      </div>
+
+      <!-- QUESTÃO 2 - LISTA 2 -->
+      <div class="card">
+        <h2>📘 Lista 2 — Questão 2: Correntes e Zona de Depleção no Diodo $n^+p$ de Silício</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Um diodo de silício $n^+p$ a $300\text{ K}$ possui as seguintes características: $N_D = 1,0\times 10^{18}\text{ cm}^{-3}$, $N_A = 1,0\times 10^{16}\text{ cm}^{-3}$, $A = 1,2\times 10^{-4}\text{ cm}^2$ e $\tau_p = \tau_n = 1\ \mu\text{s}$. Determinar:<br/>
+          a) A corrente reversa de saturação desse diodo.<br/>
+          b) A corrente do diodo para polarização direta de $0,5\text{ V}$.<br/>
+          c) A corrente do diodo para polarização reversa de $0,5\text{ V}$.<br/>
+          d) A largura da zona de depleção com polarização reversa de $0,5\text{ V}$.<br/>
+          <em>Dados:</em> $\varepsilon_r$ do silício $= 11,7$, $\varepsilon_0 = 8,854\times 10^{-12}\text{ F/m}$, $D_n$ dos elétrons na região P do silício $= 34\text{ cm}^2/\text{s}$, $D_p$ das lacunas na região N do silício $= 13\text{ cm}^2/\text{s}$, $n_i = 10^{10}\text{ cm}^{-3}$.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 10 (Slide 3), Aula 11 (Slides 1 a 6) &amp; Aula 12 (Slide 6)</span>
+          <span class="badge-ref">📚 Referência no Livro: Kanaan Kano, Cap. 5 (Problema 5.7, pág. 152)</span>
+          <button class="preset-btn" onclick="jumpToPreset(2, 'L2Q2_dir')">⚡ Simular Questão 2 no Laboratório JS</button>
+        </p>
+
+        <div class="gif-container">
+          <img src="animacoes/anim_2_injecao_correntes_pn.gif" alt="Animação Python da Questão 2 - Lista 2" />
+          <div class="gif-caption">
+            🎬 <strong>Animação gerada em Python (Matplotlib):</strong> Evolução do perfil de portadores minoritários injetados ($n_p(x)$ e $p_n(x)$) e ponto de operação na curva $I$-$V$ de Shockley para o diodo $n^+p$ da Questão 2.
+          </div>
+        </div>
+
+        <h3>Item (a): Corrente Reversa de Saturação ($I_S$)</h3>
+        <p>
+          Pela <strong>Aula 11 (Slides 2 e 6)</strong> e <strong>Aula 12 (Slide 6)</strong>, resolvendo a equação da continuidade estacionária fora da zona de depleção ($\frac{d^2 p'}{dx^2} = \frac{p'}{D_p \tau_p}$), obtemos os <strong>comprimentos de difusão</strong> dos portadores minoritários:
+        </p>
+        <div class="formula-box">
+          $$L_p = \sqrt{D_p\,\tau_p} = \sqrt{(13\text{ cm}^2/\text{s})\times (10^{-6}\text{ s})} = 3,6056 \times 10^{-3}\text{ cm} \quad (36,06\ \mu\text{m})$$
+          $$L_n = \sqrt{D_n\,\tau_n} = \sqrt{(34\text{ cm}^2/\text{s})\times (10^{-6}\text{ s})} = 5,8310 \times 10^{-3}\text{ cm} \quad (58,31\ \mu\text{m})$$
+        </div>
+        <p>
+          Pela lei da ação das massas ($p_0 n_0 = n_i^2$, <strong>Aula 8 Slide 1</strong>), as concentrações de minoritários no equilíbrio térmico são:
+        </p>
+        <div class="formula-box">
+          $$p_{0n} = \frac{n_i^2}{N_D} = \frac{(10^{10})^2}{1,0\times 10^{18}} = 10^2\text{ cm}^{-3} \qquad \text{e} \qquad n_{0p} = \frac{n_i^2}{N_A} = \frac{(10^{10})^2}{1,0\times 10^{16}} = 10^4\text{ cm}^{-3}$$
+        </div>
+        <p>
+          Note como $n_{0p}$ (elétrons no lado P menos dopado) é $100\times$ maior que $p_{0n}$ (lacunas no lado $N^+$ muito dopado)! Aplicando a equação da corrente de saturação da <strong>Aula 12, Slide 6</strong>:
+        </p>
+        <div class="formula-box green">
+          $$I_S = A\,q\,n_i^2\left[\frac{D_p}{L_p\,N_D} + \frac{D_n}{L_n\,N_A}\right] = A\,q\left[\frac{D_p\,p_{0n}}{L_p} + \frac{D_n\,n_{0p}}{L_n}\right]$$
+          $$\frac{D_p\,p_{0n}}{L_p} = \frac{13 \times 10^2}{3,6056\times 10^{-3}} = 3,6056 \times 10^5\text{ cm}^{-2}\text{s}^{-1}$$
+          $$\frac{D_n\,n_{0p}}{L_n} = \frac{34 \times 10^4}{5,8310\times 10^{-3}} = 5,8310 \times 10^7\text{ cm}^{-2}\text{s}^{-1}$$
+          $$I_S = (1,2\times 10^{-4}\text{ cm}^2)\times (1,6\times 10^{-19}\text{ C})\times (3,6056\times 10^5 + 5,8310\times 10^7) = \mathbf{1,1265 \times 10^{-15}\text{ A}}$$
+          <small>(Obs.: Usando a aproximação unilateral $n^+p$, desprezando o termo do lado $N^+$, obtém-se $I_S \approx 1,1195 \times 10^{-15}\text{ A}$ — menos de $0,6\%$ de diferença!)</small>
+        </div>
+
+        <h3>Item (b): Corrente para Polarização Direta ($V_a = +0,5\text{ V}$)</h3>
+        <p>Pela equação ideal do diodo de Shockley (<strong>Aula 11, Slide 6</strong>):</p>
+        <div class="formula-box green">
+          $$I = I_S\left(e^{\frac{qV_a}{kT}} - 1\right)$$
+          $$\text{Para } V_t = \frac{kT}{q} = 0,02586\text{ V}: \quad I = 1,1265\times 10^{-15}\times \left(e^{\frac{0,5}{0,02586}} - 1\right) = 1,1265\times 10^{-15}\times (2,4948\times 10^8) = \mathbf{2,810 \times 10^{-7}\text{ A}} \ (0,281\ \mu\text{A})$$
+          $$\text{Para } V_t = 0,0260\text{ V (Slide 19)}: \quad I = 1,1265\times 10^{-15}\times \left(e^{\frac{0,5}{0,026}} - 1\right) = \mathbf{2,532 \times 10^{-7}\text{ A}} \ (0,253\ \mu\text{A})$$
+        </div>
+
+        <h3>Item (c): Corrente para Polarização Reversa ($V_a = -0,5\text{ V}$)</h3>
+        <p>
+          Para $V_a = -0,5\text{ V}$ (exatamente como explicado na <strong>Aula 11, Slide 6</strong>), o termo exponencial $e^{-0,5 / 0,02586} = 4,0\times 10^{-9} \ll 1$ é completamente desprezível frente a $1$. Portanto:
+        </p>
+        <div class="formula-box green">
+          $$I = I_S\left(e^{\frac{-0,5}{0,02586}} - 1\right) \approx -I_S = \mathbf{-1,1265 \times 10^{-15}\text{ A}} \quad (\text{ou } 1,13\text{ fA no sentido reverso})$$
+        </div>
+
+        <h3>Item (d): Largura da Zona de Depleção com Polarização Reversa de $0,5\text{ V}$ ($V_a = -0,5\text{ V}$)</h3>
+        <p>
+          Primeiro convertemos a permissividade para $\text{F/cm}$ (já que $N_A$ e $N_D$ estão em $\text{cm}^{-3}$!):
+          $$\varepsilon_0 = 8,854\times 10^{-12}\text{ F/m} = 8,854\times 10^{-14}\text{ F/cm} \implies \varepsilon_s = \varepsilon_r\,\varepsilon_0 = 11,7 \times 8,854\times 10^{-14} = 1,0359\times 10^{-12}\text{ F/cm}$$
+          Calculamos a tensão de built-in $V_{bi}$ (<strong>Aula 9, Slide 4</strong>):
+          $$V_{bi} = \frac{kT}{q}\ln\left(\frac{N_A\,N_D}{n_i^2}\right) = 0,02586 \times \ln\left(\frac{10^{16}\times 10^{18}}{(10^{10})^2}\right) = 0,02586 \times \ln(10^{14}) = \mathbf{0,8336\text{ V}} \quad (0,8381\text{ V se } V_t = 0,026\text{ V})$$
+          Pela <strong>Aula 10, Slide 3</strong>, na polarização reversa $V_a = -0,5\text{ V}$, a barreira total é $V_j = V_{bi} - V_a = 0,8336 - (-0,5) = 1,3336\text{ V}$, e a largura da zona de depleção $W$ vale:
+        </p>
+        <div class="formula-box green">
+          $$W = \sqrt{\frac{2\,\varepsilon_s}{q}\left(\frac{N_A + N_D}{N_A\,N_D}\right)(V_{bi} - V_a)}$$
+          $$W = \sqrt{\frac{2 \times 1,0359\times 10^{-12}}{1,6\times 10^{-19}}\left(\frac{10^{16} + 10^{18}}{10^{16}\times 10^{18}}\right)(1,3336)} = \mathbf{4,176 \times 10^{-5}\text{ cm}} = \mathbf{0,418\ \mu\text{m}} \ (417,6\text{ nm})$$
+          <small>(Pela aproximação unilateral $N_D \gg N_A$, $W \approx \sqrt{\frac{2\varepsilon_s(V_{bi}-V_a)}{qN_A}} = 4,156\times 10^{-5}\text{ cm} = 0,416\ \mu\text{m}$).</small>
+        </div>
+        <div class="badge-ans">
+          ✅ Respostas (Q2): a) $I_S = 1,13\times 10^{-15}\text{ A}$ | b) $I = 2,81\times 10^{-7}\text{ A}$ | c) $I = -1,13\times 10^{-15}\text{ A}$ | d) $W = 4,18\times 10^{-5}\text{ cm}\ (0,418\ \mu\text{m})$
+        </div>
+      </div>
+
+      <!-- QUESTÃO 3 - LISTA 2 -->
+      <div class="card">
+        <h2>📘 Lista 2 — Questão 3: Cálculo da Polarização $V_a$ pelo Perfil de Campo Elétrico $\mathcal{E}(x)$</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> No diagrama abaixo, o perfil de campo elétrico no equilíbrio é mostrado no painel central ($\mathcal{E}_{max} = -16\text{ kV/cm}$), enquanto o do diodo polarizado, no último ($\mathcal{E}_{max} = -8\text{ kV/cm}$). Utilizando a aproximação de depleção, calcule a tensão de polarização $V_a$ (com o respectivo sinal).
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 8 (Slide 3), Aula 9 (Slides 5 e 7) &amp; Aula 10 (Slides 2 a 5)</span>
+          <button class="preset-btn" onclick="jumpToPreset(1, 'L2Q3_bias')">⚡ Simular Questão 3 no Laboratório JS</button>
+        </p>
+
+        <div class="gif-container">
+          <img src="animacoes/anim_1_juncao_pn_eletrostatica.gif" alt="Animação Python da Questão 3 - Lista 2" />
+          <div class="gif-caption">
+            🎬 <strong>Animação gerada em Python (Matplotlib):</strong> Observe no painel superior direito (2) como a área do triângulo do campo elétrico $\mathcal{E}(x)$ reduz de $0,80\text{ V}$ no equilíbrio ($\mathcal{E}_{max} = -16\text{ kV/cm}, W_0 = 1,0\ \mu\text{m}$) para $0,20\text{ V}$ quando $V_a = +0,60\text{ V}$ ($\mathcal{E}_{max} = -8\text{ kV/cm}, W = 0,5\ \mu\text{m}$)!
+          </div>
+        </div>
+
+        <div class="didactic-callout">
+          <strong>💡 A Grande Sacada Física da Questão 3 (Sem precisar decorar fórmulas gigantes!):</strong><br/>
+          Da eletrostática (<strong>Aula 8, Slide 3</strong> e <strong>Aula 9, Slide 7</strong>), o potencial eletrostático é o negativo da integral do campo elétrico:
+          $$\Delta \phi = -\int_{-x_p}^{x_n} \mathcal{E}_x\,dx = \text{Área do triângulo do campo elétrico!} = \frac{-\mathcal{E}_{max}\cdot W}{2}$$
+          <ul>
+            <li>No <strong>equilíbrio térmico</strong> (painel central), essa área vale exatamente a barreira natural $V_{bi}$.</li>
+            <li>No <strong>diodo polarizado</strong> (último painel), essa área vale a nova barreira da junção $V_j = V_{bi} - V_a$ (<strong>Aula 10, Slide 3</strong>).</li>
+            <li>Como o módulo do campo máximo <strong>diminuiu</strong> de $16\text{ kV/cm}$ para $8\text{ kV/cm}$ (e a zona de depleção encolheu), sabemos imediatamente pela tabela da <strong>Aula 10, Slide 2</strong> que o diodo está em <strong>Polarização Direta ($V_a > 0$)</strong>!</li>
+          </ul>
+        </div>
+
+        <h3>Passo 1: Calcular $V_{bi}$ a partir do triângulo em equilíbrio (painel central)</h3>
+        <p>
+          Olhando o eixo horizontal $x'$ no painel central da figura da Lista 2: cada divisão entre os traços (ticks) vale $1\ \mu\text{m}$ (como indicado entre os traços `0` e `1 µm`). No equilíbrio, a base do triângulo na região $N$ vai da junção metalúrgica até o primeiro traço (`0`), portanto tem largura:
+          $$W_0 \approx x_{n0} = 1\ \mu\text{m} = 1,0 \times 10^{-4}\text{ cm}$$
+          Com $\mathcal{E}_{max,0} = -16\text{ kV/cm} = -16 \times 10^3\text{ V/cm}$, a equação da <strong>Aula 9, Slide 7</strong> fornece:
+        </p>
+        <div class="formula-box">
+          $$V_{bi} = \frac{-\mathcal{E}_{max,0}\,W_0}{2} = \frac{-(-16 \times 10^3\text{ V/cm})\times (1,0 \times 10^{-4}\text{ cm})}{2} = \mathbf{0,80\text{ V}}$$
+        </div>
+
+        <h3>Passo 2: Calcular a nova barreira $V_j = V_{bi} - V_a$ no diodo polarizado (último painel)</h3>
+        <p>
+          Na aproximação de depleção para uma junção unilateral $P^+N$ (<strong>Aula 9, Slide 5</strong>), o campo máximo é diretamente proporcional à largura de depleção: $|\mathcal{E}_{max}| = \frac{q N_D x_n}{\varepsilon_s}$.<br/>
+          Como o campo máximo caiu exatamente pela <strong>metade</strong> (de $-16\text{ kV/cm}$ para $-8\text{ kV/cm}$), a largura da zona de depleção também caiu pela <strong>metade</strong>:
+          $$W = \frac{W_0}{2} = 0,5\ \mu\text{m} = 0,5 \times 10^{-4}\text{ cm}$$
+          (O que confere visualmente com o último painel, onde o vértice `0` recuou para a metade da primeira divisão!). Assim, a área do novo triângulo vale $\frac{1}{2}\times\frac{1}{2} = \frac{1}{4}$ da área original:
+        </p>
+        <div class="formula-box green">
+          $$V_j = V_{bi} - V_a = \frac{-\mathcal{E}_{max}\,W}{2} = \frac{-(-8 \times 10^3\text{ V/cm})\times (0,5 \times 10^{-4}\text{ cm})}{2} = \mathbf{0,20\text{ V}}$$
+          $$\implies V_a = V_{bi} - V_j = 0,80\text{ V} - 0,20\text{ V} = \mathbf{+0,60\text{ V}}$$
+        </div>
+        <div class="badge-ans">✅ Resposta Final (Q3): $V_a = +0,60\text{ V}$ (Sinal positivo — Polarização Direta)</div>
+      </div>
+
+      <!-- QUESTÃO 4 - LISTA 2 -->
+      <div class="card">
+        <h2>📘 Lista 2 — Questão 4: Capacitância de Depleção em Diodo $P^+N$</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> A capacitância de um diodo de silício $P^+N$ em duas diferentes polarizações reversas foram: $C_j = 20\text{ pF}$ para $V_a = -4,3\text{ V}$ e $C_j = 40\text{ pF}$ para $V_a = -0,55\text{ V}$. Sabendo que a área do diodo é de $2\times 10^{-2}\text{ cm}^2$ e $N_A = 10^{18}\text{ cm}^{-3}$, determinar:<br/>
+          a) $N_D$.<br/>
+          b) $V_{bi}$.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 13 (Slides 1 e 2)</span>
+          <span class="badge-ref">📚 Referência no Livro: Kanaan Kano, Cap. 7 (Problema 7.6, pág. 206)</span>
+          <button class="preset-btn" onclick="jumpToPreset(2, 'L2Q4_p2')">⚡ Simular Questão 4 no Laboratório JS</button>
+        </p>
+
+        <div class="gif-container">
+          <img src="animacoes/anim_3_capacitancia_deplecao.gif" alt="Animação Python da Questão 4 - Lista 2" />
+          <div class="gif-caption">
+            🎬 <strong>Animação gerada em Python (Matplotlib):</strong> Curva não-linear $C_j(V_a)$ e reta de linearização $1/C_j^2 \times V_a$ passando pelos dois pontos experimentais $(-4,3\text{ V}; 20\text{ pF})$ e $(-0,55\text{ V}; 40\text{ pF})$.
+          </div>
+        </div>
+
+        <h3>Passo 1: Equação da Capacitância de Junção $C_j$ (Aula 13, Slide 1)</h3>
+        <p>
+          Em polarização reversa, a zona de depleção funciona como um capacitor de placas paralelas cuja distância entre as placas é a largura $W(V_a)$. Da <strong>Aula 13, Slide 1</strong>, para um diodo unilateral $P^+N$ ($N_A \gg N_D$):
+        </p>
+        <div class="formula-box">
+          $$C_j = A\left[\frac{q\,\varepsilon_s\,N_D\,N_A}{2(N_A + N_D)(V_{bi} - V_a)}\right]^{1/2} \xrightarrow{N_A \gg N_D} C_j = A\left[\frac{q\,\varepsilon_s\,N_D}{2(V_{bi} - V_a)}\right]^{1/2}$$
+        </div>
+
+        <h3>Passo 2: Determinar $V_{bi}$ (Item b) usando a razão entre as duas capacitâncias</h3>
+        <p>
+          Note que na expressão de $C_j$, os termos $A, q, \varepsilon_s, N_D$ são constantes! Elevando ao quadrado a razão entre $C_{j2} = 40\text{ pF}$ ($V_{a2} = -0,55\text{ V}$) e $C_{j1} = 20\text{ pF}$ ($V_{a1} = -4,3\text{ V}$), todas as constantes se cancelam:
+        </p>
+        <div class="formula-box green">
+          $$\left(\frac{C_{j2}}{C_{j1}}\right)^2 = \frac{V_{bi} - V_{a1}}{V_{bi} - V_{a2}} \implies \left(\frac{40\text{ pF}}{20\text{ pF}}\right)^2 = \frac{V_{bi} - (-4,3)}{V_{bi} - (-0,55)}$$
+          $$4 = \frac{V_{bi} + 4,3}{V_{bi} + 0,55} \implies 4\,V_{bi} + 2,20 = V_{bi} + 4,30 \implies 3\,V_{bi} = 2,10 \implies \mathbf{V_{bi} = 0,70\text{ V}}$$
+        </div>
+
+        <h3>Passo 3: Determinar a concentração de doadores $N_D$ (Item a)</h3>
+        <p>
+          Isolando $N_D$ na equação de $C_j$ e substituindo o ponto $(V_{a2} = -0,55\text{ V}, C_{j2} = 40\times 10^{-12}\text{ F})$ com $V_{bi} = 0,70\text{ V}$, $A = 2\times 10^{-2}\text{ cm}^2$, $q = 1,6\times 10^{-19}\text{ C}$ e $\varepsilon_s = 11,7 \times 8,854\times 10^{-14} = 1,0359\times 10^{-12}\text{ F/cm}$:
+        </p>
+        <div class="formula-box green">
+          $$N_D = \frac{2\,C_{j2}^2\,(V_{bi} - V_{a2})}{A^2\,q\,\varepsilon_s} = \frac{2 \times (40\times 10^{-12}\text{ F})^2 \times (0,70 - (-0,55))\text{ V}}{(2\times 10^{-2}\text{ cm}^2)^2 \times (1,6\times 10^{-19}\text{ C}) \times (1,0359\times 10^{-12}\text{ F/cm})}$$
+          $$N_D = \frac{4,0 \times 10^{-21}}{6,6299 \times 10^{-35}} = \mathbf{6,033 \times 10^{13}\text{ cm}^{-3}}$$
+          <small>(Obs.: Usando $\varepsilon_s = 1,0443\times 10^{-12}\text{ F/cm}$ da Lista 3 obtém-se $N_D = 5,985\times 10^{13}\text{ cm}^{-3} \approx 6,0\times 10^{13}\text{ cm}^{-3}$. E como $N_D \approx 6\times 10^{13} \ll N_A = 10^{18}\text{ cm}^{-3}$, a aproximação $P^+N$ é exata até a 5ª casa decimal!)</small>
+        </div>
+        <div class="badge-ans">✅ Respostas (Q4): a) $N_D \approx 6,03 \times 10^{13}\text{ cm}^{-3}$ | b) $V_{bi} = 0,70\text{ V}$</div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- ABA 3: LISTA DE EXERCÍCIOS 3 RESOLVIDA PASSO A PASSO               -->
+    <!-- ================================================================== -->
+    <section id="tab-lista3" class="tab-section">
+
+      <!-- QUESTÃO 1 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 1: Efeito da Dopagem $N_D$ sobre $V_{bi}$ e $\varphi_B$ no Diodo Schottky</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Silício tipo N ($N_D = 10^{15}\text{ cm}^{-3}$) foi utilizado para fabricar um diodo Schottky com tensão de built-in de $V_{bi} = 0,40\text{ V}$. A barreira energética formada entre o metal e o substrato é de $\varphi_B = 0,65\text{ V}$. Caso a dopagem do semicondutor for alterada para $N_D = 4,8\times 10^{15}\text{ cm}^{-3}$, diga como serão os novos valores de $V_{bi}$ e $\varphi_B$. Basta dizer se os mesmos aumentarão, diminuirão ou ficarão constantes. Explique a razão da mudança ou não desses valores.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 2 e 3)</span>
+          <span class="badge-ref">📚 Referência no Livro: Kanaan Kano, Cap. 10 (Seção 10.1 — Metal-Semiconductor Junctions)</span>
+          <button class="preset-btn" onclick="jumpToPreset(3, 'L3Q1_fim')">⚡ Simular Questão 1 da Lista 3 no Laboratório JS</button>
+        </p>
+
+        <div class="gif-container">
+          <img src="animacoes/anim_4_diodo_schottky.gif" alt="Animação Python Diodo Schottky - Lista 3" />
+          <div class="gif-caption">
+            🎬 <strong>Animação gerada em Python (Matplotlib):</strong> Diagrama de bandas do Diodo Schottky (Q1 e Q2) e curvas de emissão termiônica a $300\text{ K}$ e $85^\circ\text{C}$ (Q3).
+          </div>
+        </div>
+
+        <h3>Análise Física e Equações da Aula 14 (Slide 3)</h3>
+        <ul class="step-list">
+          <li>
+            <strong>1. O que acontece com a barreira $\varphi_B$? $\rightarrow$ FICA CONSTANTE ($\varphi_B = 0,65\text{ V}$).</strong><br/>
+            Pela equação da <strong>Aula 14, Slide 3</strong>:
+            $$q\varphi_B = q\varphi_m - q\chi_s$$
+            A barreira de potencial vista pelos elétrons do metal para o semicondutor ($\varphi_B$) depende <strong>exclusivamente</strong> da função trabalho do metal ($q\varphi_m$, uma propriedade intrínseca do metal escolhido) e da afinidade eletrônica do semicondutor ($q\chi_s = 4,05\text{ eV}$ para o silício, que é a distância entre o fundo da banda de condução $E_C$ e o nível de vácuo). Nenhuma dessas duas grandezas depende da concentração de dopantes $N_D$! Logo, ao alterar $N_D$, <strong>$\varphi_B$ permanece constante</strong>.
+          </li>
+          <li>
+            <strong>2. O que acontece com a tensão de built-in $V_{bi}$? $\rightarrow$ AUMENTA!</strong><br/>
+            Pela equação da <strong>Aula 14, Slide 3</strong>:
+            $$qV_{bi} = q\varphi_m - q\varphi_s = q\varphi_B - (E_C - E_F)$$
+            No semicondutor tipo N, o nível de Fermi $E_F$ está abaixo de $E_C$ por uma distância $E_C - E_F = kT\ln\left(\frac{N_C}{N_D}\right)$ (ou, em relação ao nível intrínseco, $E_F - E_i = kT\ln\left(\frac{N_D}{n_i}\right)$).<br/>
+            Quando <strong>aumentamos a dopagem</strong> de $N_{D1} = 10^{15}\text{ cm}^{-3}$ para $N_{D2} = 4,8\times 10^{15}\text{ cm}^{-3}$, há mais elétrons na banda de condução, fazendo o nível de Fermi $E_F$ <strong>subir em direção a $E_C$</strong>. Isso <strong>diminui</strong> a função trabalho do semicondutor $q\varphi_s = q\chi_s + (E_C - E_F)$, aumentando a diferença de energia entre o nível de Fermi do semicondutor e o do metal antes do contato! Portanto, maior entortamento de bandas é necessário para alinhar os níveis de Fermi, e <strong>$V_{bi}$ aumenta</strong>!<br/>
+            <em>Cálculo complementar (bônus):</em> O aumento exato vale $\Delta V_{bi} = \frac{kT}{q}\ln\left(\frac{4,8\times 10^{15}}{10^{15}}\right) = 0,02586 \times \ln(4,8) = +0,0406\text{ V}$, levando $V_{bi}$ de $0,40\text{ V}$ para $\mathbf{0,4406\text{ V}}$.
+          </li>
+        </ul>
+        <div class="badge-ans">✅ Resposta Final (Q1): $\varphi_B$ fica CONSTANTE ($0,65\text{ V}$) e $V_{bi}$ AUMENTA (para $\approx 0,44\text{ V}$).</div>
+      </div>
+
+      <!-- QUESTÃO 2 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 2: Barreiras Energéticas do Diodo Schottky sob Polarização</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Uma junção metal/semicondutor apresenta as seguintes características: $q\varphi_B = 0,65\text{ eV}$ e $V_{bi} = 0,40\text{ V}$. Quais os valores das barreiras energéticas ($qV_{bi}$ e $q\varphi_B$, isto é, a barreira do semicondutor para o metal e do metal para o semicondutor) para a mesma junção quando esta é:<br/>
+          a) polarizada diretamente com $0,2\text{ V}$.<br/>
+          b) polarizada reversamente com $5\text{ V}$.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 3, 4 e 5)</span>
+          <button class="preset-btn" onclick="jumpToPreset(3, 'L3Q2a')">⚡ Testar Q2a (Direta) no Simulador</button>
+          <button class="preset-btn" onclick="jumpToPreset(3, 'L3Q2b')">⚡ Testar Q2b (Reversa) no Simulador</button>
+        </p>
+
+        <div class="didactic-callout">
+          <strong>💡 Entendendo os Slides 4 e 5 da Aula 14:</strong><br/>
+          Como o metal é um condutor perfeito repleto de elétrons livres, não existe queda de tensão nem zona de depleção dentro do metal: <strong>toda a tensão externa aplicada $V_a$ cai sobre a zona de depleção do semicondutor</strong>!
+          <ul>
+            <li>Por isso, na interface $x=0$, o degrau entre o nível de Fermi do metal $E_{Fm}$ e o topo da banda de condução do semicondutor $E_C(0)$ é <strong>fixo</strong>: a barreira <strong>Metal $\rightarrow$ Semicondutor ($q\varphi_B$)</strong> <strong>não muda com a polarização</strong>!</li>
+            <li>Já a barreira <strong>Semicondutor $\rightarrow$ Metal</strong> (que no equilíbrio vale $qV_{bi}$) passa a valer $q(V_{bi} - V_a)$ (ou $q(V_{bi} + V_R)$ na notação dos Slides 4 e 5 da Aula 14).</li>
+          </ul>
+        </div>
+
+        <div class="formula-box green">
+          <strong>a) Polarização Direta com $V_a = +0,2\text{ V}$ (Aula 14, Slide 5 - esquerda):</strong><br/>
+          • Barreira Semicondutor $\rightarrow$ Metal: $qV_{ef} = q(V_{bi} - V_a) = 0,40\text{ eV} - 0,20\text{ eV} = \mathbf{0,20\text{ eV}}$ (diminui, facilitando a injeção de elétrons do semicondutor para o metal!).<br/>
+          • Barreira Metal $\rightarrow$ Semicondutor: $q\varphi_B = \mathbf{0,65\text{ eV}}$ (permanece constante!).<br/><br/>
+          <strong>b) Polarização Reversa com $5\text{ V}$ ($V_a = -5,0\text{ V}$ ou $V_R = +5,0\text{ V}$, Aula 14, Slide 4 e 5 - direita):</strong><br/>
+          • Barreira Semicondutor $\rightarrow$ Metal: $qV_{ef} = q(V_{bi} - V_a) = q(V_{bi} + V_R) = 0,40\text{ eV} + 5,00\text{ eV} = \mathbf{5,40\text{ eV}}$ (aumenta drasticamente, bloqueando a passagem de elétrons do semicondutor para o metal!).<br/>
+          • Barreira Metal $\rightarrow$ Semicondutor: $q\varphi_B = \mathbf{0,65\text{ eV}}$ (permanece constante!).
+        </div>
+        <div class="badge-ans">
+          ✅ Respostas (Q2): a) Direta ($0,2\text{ V}$): $q(V_{bi}-V_a) = 0,20\text{ eV}$ e $q\varphi_B = 0,65\text{ eV}$ | b) Reversa ($5\text{ V}$): $q(V_{bi}+V_R) = 5,40\text{ eV}$ e $q\varphi_B = 0,65\text{ eV}$
+        </div>
+      </div>
+
+      <!-- QUESTÃO 3 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 3: Projeto de Área e Efeito da Temperatura no Diodo Schottky Cr/Si</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Um diodo Schottky foi fabricado com cromo como eletrodo metálico depositado sobre o substrato semicondutor de silício. Considera que o mesmo diodo quando polarizado diretamente com $0,2\text{ V}$, gera uma corrente de $100\text{ mA}$. Qual a área deste diodo? Considere uma temperatura de $300\text{ K}$. Qual o potencial que deve ser aplicado nesse eletrodo para obtermos a mesma corrente em polarização direta ($100\text{ mA}$) quando este é operado a $85\ ^\circ\text{C}$?<br/>
+          <em>Dados:</em> $A^* = 120\text{ A}\cdot\text{cm}^{-2}\cdot\text{K}^{-2}$, Cromo $q\varphi_m = 4,5\text{ eV}$ (e da folha de constantes: $q\chi_s = 4,05\text{ eV}$, $k = 8,62\times 10^{-5}\text{ eV/K}$).
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 3, 5 e 19)</span>
+          <button class="preset-btn" onclick="jumpToPreset(3, 'L3Q3_300')">⚡ Simular Q3 a 300 K</button>
+          <button class="preset-btn" onclick="jumpToPreset(3, 'L3Q3_358')">⚡ Simular Q3 a 85 °C (358 K)</button>
+        </p>
+
+        <h3>Passo 1: Calcular a altura da barreira Schottky $q\varphi_B$ (Cromo / Silício)</h3>
+        <p>Da <strong>Aula 14, Slide 3 e Slide 19</strong>, com $q\varphi_m(\text{Cr}) = 4,50\text{ eV}$ e $q\chi_s(\text{Si}) = 4,05\text{ eV}$:</p>
+        <div class="formula-box">
+          $$q\varphi_B = q\varphi_m - q\chi_s = 4,50\text{ eV} - 4,05\text{ eV} = \mathbf{0,45\text{ eV}}$$
+        </div>
+
+        <h3>Passo 2: Determinar a Área $A$ do diodo a $T_1 = 300\text{ K}$</h3>
+        <p>
+          Pelas equações de emissão termiônica da <strong>Aula 14, Slide 5</strong>:
+        </p>
+        <div class="formula-box">
+          $$I_S = A\,A^*\,T^2\,e^{-\frac{q\varphi_B}{kT}} \qquad \text{e} \qquad I_D = I_S\left(e^{\frac{qV_D}{kT}} - 1\right)$$
+        </div>
+        <p>
+          A $T_1 = 300\text{ K}$, temos $kT_1 = (8,62\times 10^{-5}\text{ eV/K})\times 300\text{ K} = 0,02586\text{ eV}$. Para $V_D = 0,20\text{ V}$ e $I_D = 100\text{ mA} = 0,10\text{ A}$:
+        </p>
+        <div class="formula-box green">
+          $$J_S(300\text{ K}) = \frac{I_S}{A} = 120 \times (300)^2 \times e^{-\frac{0,45}{0,02586}} = 1,08\times 10^7 \times e^{-17,4014} = 0,2993\text{ A/cm}^2$$
+          $$e^{\frac{0,20}{0,02586}} - 1 = e^{7,73395} - 1 = 2283,48$$
+          $$A = \frac{I_D}{J_S(300\text{ K})\cdot\left(e^{\frac{qV_D}{kT_1}} - 1\right)} = \frac{0,10\text{ A}}{0,2993\text{ A/cm}^2 \times 2283,48} = \mathbf{1,463 \times 10^{-4}\text{ cm}^2} \quad (0,0146\text{ mm}^2)$$
+          <small>(Nota: Usando $V_t = 0,026\text{ V}$ do Slide 19 da Aula 14, obtém-se $A = 1,389 \times 10^{-4}\text{ cm}^2$).</small>
+        </div>
+
+        <h3>Passo 3: Determinar o novo potencial $V_D$ a $T_2 = 85\ ^\circ\text{C} = 358\text{ K}$ (ou $358,15\text{ K}$)</h3>
+        <p>
+          A $T_2 = 85 + 273 = 358\text{ K}$, a energia térmica sobe para $kT_2 = (8,62\times 10^{-5})\times 358 = 0,03086\text{ eV}$. Com a temperatura maior, os elétrons têm muito mais energia térmica para vencer a barreira $q\varphi_B$, fazendo a corrente reversa de saturação $I_S$ crescer fortemente:
+        </p>
+        <div class="formula-box green">
+          $$I_S(358\text{ K}) = A\,A^*\,T_2^2\,e^{-\frac{q\varphi_B}{kT_2}} = (1,4631\times 10^{-4})\times 120 \times (358)^2 \times e^{-\frac{0,45}{0,03086}} = \mathbf{1,0454 \times 10^{-3}\text{ A}} \ (1,045\text{ mA})$$
+          $$\text{Isolando } V_D \text{ para manter } I_D = 0,10\text{ A}:$$
+          $$I_D = I_S(358\text{ K})\left(e^{\frac{qV_D}{kT_2}} - 1\right) \implies V_D = \frac{kT_2}{q}\ln\left(1 + \frac{I_D}{I_S(358\text{ K})}\right)$$
+          $$V_D = 0,03086 \times \ln\left(1 + \frac{0,10}{1,0454\times 10^{-3}}\right) = 0,03086 \times \ln(96,657) = \mathbf{0,1411\text{ V}} \quad (\approx \mathbf{0,141\text{ V}})$$
+        </div>
+        <div class="badge-ans">
+          ✅ Respostas (Q3): Área $A = 1,46 \times 10^{-4}\text{ cm}^2$ | Potencial a $85\ ^\circ\text{C}$: $V_D = 0,141\text{ V}$
+        </div>
+      </div>
+
+      <!-- QUESTÃO 4 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 4: Campo Elétrico no Óxido de um Capacitor MOS Tipo N</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Um capacitor MOS fabricado sobre um substrato semicondutor de silício tipo N apresenta uma tensão de banda plana de $V_{FB} = -1\text{ V}$. A camada de óxido de silício utilizada apresenta uma espessura de $5\text{ nm}$. Calcule o valor do campo elétrico no óxido e diga qual o sentido do mesmo ($\text{semicondutor}\rightarrow\text{óxido}$ ou $\text{óxido}\rightarrow\text{semicondutor}$) quando se aplica um potencial no eletrodo de porta de $V_G = 0\text{ V}$.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 8, 11, 13, 16 e 17) &amp; Tabela da Lista 3 (pág. 2)</span>
+          <button class="preset-btn" onclick="jumpToPreset(4, 'L3Q4')">⚡ Simular Questão 4 da Lista 3 no Laboratório JS</button>
+        </p>
+
+        <h3>Passo 1: Identificar o regime de operação do Capacitor MOS em $V_G = 0\text{ V}$</h3>
+        <p>
+          Consultando diretamente a <strong>Tabela da Lista 3 (página 2) / Aula 14 (Slide 17)</strong> para um substrato <strong>Tipo N</strong>:
+        </p>
+        <ul class="step-list">
+          <li><strong>Acumulação (Tipo N):</strong> ocorre quando $V_{FB} &lt; V_G$.</li>
+          <li>Como $V_{FB} = -1\text{ V}$ e aplicamos $V_G = 0\text{ V}$, temos $0\text{ V} &gt; -1\text{ V}$ ($V_G &gt; V_{FB}$) $\implies$ <strong>O capacitor MOS está operando em ACUMULAÇÃO!</strong></li>
+          <li>Pela terceira linha da tabela da Lista 3, em <strong>Acumulação</strong> o potencial de superfície no semicondutor é <strong>desprezível ($\varphi_s \approx 0$)</strong>!</li>
+        </ul>
+
+        <h3>Passo 2: Calcular o módulo do campo elétrico no óxido ($\mathcal{E}_{ox}$)</h3>
+        <p>
+          A relação geral de tensões no capacitor MOS é $V_G - V_{FB} = V_{ox} + \varphi_s$. Como $\varphi_s \approx 0$ na acumulação, toda a tensão efetiva $V_G - V_{FB}$ cai diretamente sobre o óxido de espessura $t_{ox} = 5\text{ nm} = 5\times 10^{-9}\text{ m} = 5\times 10^{-7}\text{ cm}$:
+        </p>
+        <div class="formula-box green">
+          $$V_{ox} = V_G - V_{FB} = 0\text{ V} - (-1\text{ V}) = +1,0\text{ V}$$
+          $$\mathcal{E}_{ox} = \frac{|V_{ox}|}{t_{ox}} = \frac{|V_G - V_{FB}|}{t_{ox}} = \frac{1,0\text{ V}}{5\times 10^{-9}\text{ m}} = \mathbf{2,0 \times 10^8\text{ V/m}} = \mathbf{2,0 \times 10^6\text{ V/cm}} \ (2\text{ MV/cm})$$
+        </div>
+        <p>
+          <small>(Obs.: Mesmo que alguém usasse a fórmula de carga da tabela, $Q_A = |V_{FB}-V_G|C_{ox}$, pela Lei de Gauss $\mathcal{E}_{ox} = \frac{Q_A}{\varepsilon_{ox}} = \frac{|V_{FB}-V_G|(\varepsilon_{ox}/t_{ox})}{\varepsilon_{ox}} = \frac{|V_G-V_{FB}|}{t_{ox}} = 2\times 10^8\text{ V/m}$, que independe de $\varepsilon_{ox}$!)</small>
+        </p>
+
+        <h3>Passo 3: Determinar o sentido do campo elétrico no óxido</h3>
+        <p>
+          Como o substrato é <strong>Tipo N</strong> e está em <strong>acumulação</strong> ($V_G = 0\text{ V} &gt; V_{FB} = -1\text{ V}$), os portadores majoritários acumulados na superfície do semicondutor (interface $\text{Si/SiO}_2$) são <strong>elétrons (carga negativa $-Q_A$)</strong>, enquanto no eletrodo de porta acumulam-se <strong>cargas positivas ($+Q_A$)</strong>.<br/>
+          Como as linhas de campo elétrico apontam sempre das cargas positivas (porta/óxido) para as cargas negativas (superfície do semicondutor), o sentido do campo elétrico é:
+        </p>
+        <div class="badge-ans">
+          ✅ Resposta Final (Q4): $\mathcal{E}_{ox} = 2,0 \times 10^8\text{ V/m}$ ($2,0 \times 10^6\text{ V/cm}$) | Sentido: $\mathbf{\text{óxido} \rightarrow \text{semicondutor}}$
+        </div>
+      </div>
+
+      <!-- QUESTÃO 5 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 5: Diferença de Função Trabalho ($q\varphi_{ms}$) em Estrutura MOS</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Em uma estrutura MOS, qual a diferença de função trabalho ($q\varphi_{ms} = ???\text{ eV}$) entre a) silício fortemente dopado com boro e b) um substrato semicondutor de silício tipo P cuja concentração de dopantes é de $N_A = 10^{16}\text{ cm}^{-3}$?
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 11, 12 e Tabela do Slide 19)</span>
+          <button class="preset-btn" onclick="jumpToPreset(4, 'L3Q5')">⚡ Simular Questão 5 da Lista 3 no Laboratório JS</button>
+        </p>
+
+        <h3>Passo 1: Função trabalho do eletrodo de porta — Silício fortemente dopado com Boro ($P^+$-Si)</h3>
+        <p>
+          O Boro (grupo III da tabela periódica) é uma impureza aceitadora no silício, formando um semicondutor tipo P. Portanto, <strong>"silício fortemente dopado com boro"</strong> é o <strong>polissilício $P^+$-Si</strong>!<br/>
+          Consultando a tabela da <strong>Aula 14, Slide 19</strong> (ou lembrando que em um semicondutor degenerado $P^+$ o nível de Fermi coincide com o topo da banda de valência $E_F \approx E_V$, logo $q\varphi_m = q\chi_s + E_g = 4,05 + 1,12 = 5,17\text{ eV}$):
+        </p>
+        <div class="formula-box">
+          $$q\varphi_m(P^+\text{-Si}) = \mathbf{5,17\text{ eV}}$$
+        </div>
+
+        <h3>Passo 2: Função trabalho do substrato de Silício Tipo P ($N_A = 10^{16}\text{ cm}^{-3}$)</h3>
+        <p>
+          Olhando o diagrama de bandas da <strong>Aula 14, Slide 11</strong> (canto superior direito), a distância entre o nível de vácuo ($0$) e o nível de Fermi $E_F$ no substrato tipo P é a soma de três parcelas:
+          $$q\varphi_s = q\chi_s + \frac{E_g}{2} + q\varphi_F$$
+          onde $\varphi_F$ é o potencial de Fermi do substrato tipo P (<strong>Aula 9, Slide 3</strong>):
+        </p>
+        <div class="formula-box">
+          $$q\varphi_F = kT\ln\left(\frac{N_A}{n_i}\right) = (8,62\times 10^{-5}\text{ eV/K})\times (300\text{ K})\times \ln\left(\frac{10^{16}}{1,02\times 10^{10}}\right)$$
+          $$q\varphi_F = 0,02586 \times \ln(9,8039\times 10^5) = 0,02586 \times 13,7957 = \mathbf{0,3568\text{ eV}} \quad (\text{ou } 0,3587\text{ eV se } V_t = 0,026\text{ V})$$
+          $$q\varphi_s = 4,05\text{ eV} + \frac{1,12\text{ eV}}{2} + 0,3568\text{ eV} = 4,05 + 0,56 + 0,3568 = \mathbf{4,9668\text{ eV}}$$
+        </div>
+
+        <h3>Passo 3: Diferença de Função Trabalho ($q\varphi_{ms}$)</h3>
+        <div class="formula-box green">
+          $$q\varphi_{ms} = q\varphi_m - q\varphi_s = 5,17\text{ eV} - 4,9668\text{ eV} = \mathbf{+0,2032\text{ eV}} \quad (\text{ou } \mathbf{-0,2032\text{ eV}} \text{ se definido como } q\varphi_s - q\varphi_m)$$
+        </div>
+        <div class="badge-ans">✅ Resposta Final (Q5): $q\varphi_{ms} \approx 0,203\text{ eV}$ ($+0,203\text{ eV}$ para $q\varphi_m - q\varphi_s$)</div>
+      </div>
+
+      <!-- QUESTÃO 6 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 6: Tipo e Densidade de Portadores na Inversão Forte do Capacitor MOS</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> A tensão limiar (<em>threshold voltage</em> $V_T$) de um capacitor MOS tipo P é de $0,25\text{ V}$. Nessa estrutura é aplicada uma tensão $V_G = 5\text{ V}$. O óxido de porta tem uma espessura de $15\text{ nm}$. Qual é o tipo (lacunas ou elétrons) e a densidade dos portadores na superfície do material semicondutor em tais condições?
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 9, 15, 17 e 18) &amp; Tabela da Lista 3 (pág. 2)</span>
+          <button class="preset-btn" onclick="jumpToPreset(4, 'L3Q6')">⚡ Simular Questão 6 da Lista 3 no Laboratório JS</button>
+        </p>
+
+        <h3>Passo 1: Determinar o regime de operação e o tipo dos portadores na superfície</h3>
+        <p>
+          Pela <strong>Tabela da Lista 3 (página 2) / Aula 14 (Slide 17)</strong>, para um substrato <strong>Tipo P</strong>:
+        </p>
+        <ul class="step-list">
+          <li>Como a tensão de porta aplicada é $V_G = 5\text{ V}$ e a tensão de limiar é $V_T = 0,25\text{ V}$, temos $V_G &gt; V_T$ ($5\text{ V} &gt; 0,25\text{ V}$), o que corresponde à coluna <strong>Inversão Forte</strong>!</li>
+          <li>Num substrato <strong>Tipo P</strong> (onde os portadores majoritários no corpo são lacunas), a tensão fortemente positiva na porta ($V_G = +5\text{ V}$) repele as lacunas e atrai minoritários para a interface $\text{Si/SiO}_2$, formando um canal superficial invertido (tipo N). Portanto, os portadores móveis na superfície são <strong>ELÉTRONS</strong>!</li>
+        </ul>
+
+        <h3>Passo 2: Calcular a capacitância do óxido $C_{ox}$, a carga de inversão $|Q_I|$ e a densidade de elétrons $n_s$</h3>
+        <p>
+          Da última linha da coluna <strong>Inversão Forte</strong> da Tabela da Lista 3 (e <strong>Aula 14, Slide 9 e 17</strong>):
+          $$|Q_I| = |V_G - V_T|\,C_{ox}, \qquad \text{onde} \qquad C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}}$$
+          E a densidade superficial de portadores (número de elétrons por unidade de área) é dada dividindo a carga superficial $|Q_I|$ pela carga elementar $q = 1,6\times 10^{-19}\text{ C}$:
+          $$n_s = \frac{|Q_I|}{q} = \frac{|V_G - V_T|\,C_{ox}}{q}$$
+        </p>
+
+        <div class="didactic-callout">
+          <strong>⚠️ Atenção Importante à Constante $\varepsilon_{ox}$ na Folha da Lista 3 vs. Aula 14 (Slide 18):</strong><br/>
+          Na página 2 da Lista 3 foi impresso $\varepsilon_{ox} = 3,9 \times 8,85\times 10^{-1}\text{ F/m} = 3,4515\times 10^{-10}\text{ F/m}$ (com um erro de digitação no expoente, pois $3,9 \times 8,85\times 10^{-12}\text{ F/m} = \mathbf{3,4515\times 10^{-11}\text{ F/m}}$, como consta corretamente no <strong>Slide 18 da Aula 14</strong>: $\varepsilon_{ox} = 3,45\times 10^{-11}\text{ F/m}$). Abaixo apresentamos o resultado com <strong>ambos</strong> os valores para você ter 100% de garantia na prova!
+        </div>
+
+        <div class="formula-box green">
+          <strong>Cálculo 1 (Valor físico correto / Aula 14 Slide 18: $\varepsilon_{ox} = 3,4515\times 10^{-11}\text{ F/m}$):</strong>
+          $$C_{ox} = \frac{3,4515\times 10^{-11}\text{ F/m}}{15\times 10^{-9}\text{ m}} = 2,301 \times 10^{-3}\text{ F/m}^2 \quad (2,301\text{ mF/m}^2)$$
+          $$|Q_I| = |5,0 - 0,25|\times (2,301\times 10^{-3}) = \mathbf{1,093 \times 10^{-2}\text{ C/m}^2} \quad (1,093\times 10^{-6}\text{ C/cm}^2)$$
+          $$n_s = \frac{|Q_I|}{q} = \frac{1,093\times 10^{-2}\text{ C/m}^2}{1,6\times 10^{-19}\text{ C}} = \mathbf{6,831 \times 10^{16}\text{ elétrons/m}^2} = \mathbf{6,831 \times 10^{12}\text{ elétrons/cm}^2}$$
+          <hr style="border-color: #334155; margin: 0.6rem 0;" />
+          <strong>Cálculo 2 (Usando literalmente o expoente impresso na Lista 3: $\varepsilon_{ox} = 3,4515\times 10^{-10}\text{ F/m}$):</strong>
+          $$C_{ox} = 2,301\times 10^{-2}\text{ F/m}^2 \implies |Q_I| = \mathbf{1,093\times 10^{-1}\text{ C/m}^2} \implies n_s = \mathbf{6,831 \times 10^{17}\text{ m}^{-2}} \ (6,831\times 10^{13}\text{ cm}^{-2})$$
+        </div>
+        <div class="badge-ans">
+          ✅ Resposta Final (Q6): Portadores são <strong>ELÉTRONS</strong> | Densidade: $n_s = 6,83 \times 10^{16}\text{ m}^{-2}$ ($6,83 \times 10^{12}\text{ cm}^{-2}$) ou $|Q_I| = 1,093\times 10^{-2}\text{ C/m}^2$
+        </div>
+      </div>
+
+      <!-- QUESTÃO 7 - LISTA 3 -->
+      <div class="card">
+        <h2>📙 Lista 3 — Questão 7: Extração de $t_{ox}$ e Tipo de Substrato pela Curva $C$-$V$ em Alta Frequência</h2>
+        <div class="enunciado">
+          <strong>Enunciado:</strong> Uma estrutura MOS em acumulação e inversão forte apresenta capacitâncias de $9\text{ mF/m}^2$ e $3\text{ mF/m}^2$, respectivamente. Tais capacitâncias foram obtidas com um sinal AC de alta frequência (HF) e tensões de porta de $V_G = -2\text{ V}$ e $V_G = 2\text{ V}$, respectivamente. Determine a espessura do óxido de porta e o tipo de dopagem (P ou N) do substrato de silício.
+        </div>
+
+        <p>
+          <span class="badge-ref">📖 Referência nos Slides: Aula 14 (Slides 8, 13, 15, 17 e 18) &amp; Tabela da Lista 3 (pág. 2)</span>
+          <button class="preset-btn" onclick="jumpToPreset(4, 'L3Q7_acc')">⚡ Simular Q7 (Acumulação) no Laboratório JS</button>
+          <button class="preset-btn" onclick="jumpToPreset(4, 'L3Q7_inv')">⚡ Simular Q7 (Inversão HF) no Laboratório JS</button>
+        </p>
+
+        <div class="gif-container">
+          <img src="animacoes/anim_5_capacitor_mos_regimes.gif" alt="Animação Python Capacitor MOS - Lista 3" />
+          <div class="gif-caption">
+            🎬 <strong>Animação gerada em Python (Matplotlib):</strong> Varredura completa dos regimes do Capacitor MOS Tipo P mostrando exatamente os dois pontos da Questão 7: $C_{ox} = 9\text{ mF/m}^2$ em $V_G = -2\text{ V}$ (Acumulação) e $C_{HF} = 3\text{ mF/m}^2$ em $V_G = +2\text{ V}$ (Inversão Forte em Alta Frequência).
+          </div>
+        </div>
+
+        <h3>Parte 1: Determinar o tipo de dopagem (P ou N) do substrato de silício</h3>
+        <p>
+          O enunciado informa que a estrutura está em <strong>acumulação para $V_G = -2\text{ V}$ (tensão negativa)</strong> e em <strong>inversão forte para $V_G = +2\text{ V}$ (tensão positiva)</strong>.<br/>
+          Olhando a <strong>Tabela da Lista 3 (página 2)</strong> e o gráfico da <strong>Aula 14, Slide 8</strong>:
+        </p>
+        <ul class="step-list">
+          <li>Para $V_G$ negativo ($V_G &lt; V_{FB}$), o potencial negativo da porta atrai <strong>cargas positivas (lacunas)</strong> para a interface $\text{Si/SiO}_2$. Se acumular lacunas significa acumular portadores majoritários, então os portadores majoritários do substrato são lacunas!</li>
+          <li>Para $V_G$ positivo ($V_G &gt; V_T$), o potencial positivo da porta atrai elétrons (minoritários) formando a camada de inversão.</li>
+          <li>Portanto, o substrato de silício é <strong>TIPO P</strong>!</li>
+        </ul>
+
+        <h3>Parte 2: Determinar a espessura do óxido de porta ($t_{ox}$)</h3>
+        <p>
+          Pela coluna <strong>Acumulação</strong> da Tabela da Lista 3 (página 2), no regime de acumulação a capacitância medida por unidade de área é a própria capacitância do óxido:
+          $$C_{acc} = C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}} = 9\text{ mF/m}^2 = 9,0 \times 10^{-3}\text{ F/m}^2$$
+          Isolando $t_{ox}$:
+        </p>
+        <div class="formula-box green">
+          <strong>1) Usando o valor físico real $\varepsilon_{ox} = 3,9\,\varepsilon_0 = 3,4515\times 10^{-11}\text{ F/m}$ (Aula 14, Slide 18):</strong>
+          $$t_{ox} = \frac{\varepsilon_{ox}}{C_{ox}} = \frac{3,4515\times 10^{-11}\text{ F/m}}{9,0\times 10^{-3}\text{ F/m}^2} = \mathbf{3,835 \times 10^{-9}\text{ m}} = \mathbf{3,835\text{ nm}} \quad (3,78\text{ nm se } \varepsilon_{ox} = 3,4\times 10^{-11}\text{ F/m do Slide 19})$$
+          <strong>2) Usando literalmente o expoente impresso com typo na folha da Lista 3 ($\varepsilon_{ox} = 3,4515\times 10^{-10}\text{ F/m}$):</strong>
+          $$t_{ox} = \frac{3,4515\times 10^{-10}\text{ F/m}}{9,0\times 10^{-3}\text{ F/m}^2} = \mathbf{3,835 \times 10^{-8}\text{ m}} = \mathbf{38,35\text{ nm}}$$
+        </div>
+        <p>
+          <em>Bônus Didático (Por que a capacitância cai para $3\text{ mF/m}^2$ em Alta Frequência na Inversão Forte?):</em><br/>
+          Em alta frequência (HF), os elétrons da camada de inversão (gerados termicamente de forma lenta) não conseguem acompanhar a oscilação rápida do sinal AC. Assim, a variação de carga ocorre na borda da zona de depleção máxima $w_{d\text{-}inv}$, colocando $C_{ox}$ em série com a capacitância de depleção $C_d = \varepsilon_s / w_{d\text{-}inv}$:
+          $$\frac{1}{C_{HF}} = \frac{1}{C_{ox}} + \frac{w_{d\text{-}inv}}{\varepsilon_s} \implies w_{d\text{-}inv} = \varepsilon_s\left(\frac{1}{3\times 10^{-3}} - \frac{1}{9\times 10^{-3}}\right) = 1,0443\times 10^{-10} \times \frac{2000}{9} = \mathbf{23,21\text{ nm}}$$
+        </p>
+        <div class="badge-ans">
+          ✅ Resposta Final (Q7): Substrato <strong>TIPO P</strong> | Espessura do óxido: $t_{ox} = 3,835\text{ nm}$ (ou $38,35\text{ nm}$ com o expoente literal da folha)
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- ABA 4: RESUMO TEÓRICO & FORMULÁRIO COMPLETO (Aulas 8–14)           -->
+    <!-- ================================================================== -->
+    <section id="tab-resumo" class="tab-section">
+      <div class="card">
+        <h2>🧭 Mapa Mental e Formulário Geral para a Prova (Aulas 8 a 14 + Kanaan Kano)</h2>
+        <div class="grid-2">
+          <div class="formula-box">
+            <h3>1. Eletrostática e Equilíbrio da Junção PN (Aulas 8 e 9)</h3>
+            <p>
+              • <strong>Relação Campo-Potencial-Energia (Aula 8, Slides 3–6):</strong><br/>
+              $$\mathcal{E} = -\frac{d\phi}{dx} = \frac{1}{q}\frac{dE_C}{dx} = \frac{1}{q}\frac{dE_i}{dx}, \qquad \phi = -\frac{E}{q}$$
+              • <strong>Equação de Poisson e Aproximação de Depleção (Aula 9, Slide 5):</strong><br/>
+              $$\frac{d\mathcal{E}}{dx} = \frac{\rho}{\varepsilon_s} = \frac{q}{\varepsilon_s}(p - n + N_D - N_A)$$
+              • <strong>Neutralidade de Cargas e Campo Máximo (Aula 9, Slide 5):</strong><br/>
+              $$N_A\,x_{p0} = N_D\,x_{n0}, \qquad \mathcal{E}_{max} = -\frac{q\,N_D\,x_{n0}}{\varepsilon_s} = -\frac{q\,N_A\,x_{p0}}{\varepsilon_s}$$
+              • <strong>Tensão de Built-in e Área do Triângulo (Aula 9, Slides 4 e 7):</strong><br/>
+              $$V_{bi} = \frac{kT}{q}\ln\left(\frac{N_A\,N_D}{n_i^2}\right) = \frac{-\mathcal{E}_{max}\,W}{2}$$
+            </p>
+          </div>
+
+          <div class="formula-box amber">
+            <h3>2. Junção PN Polarizada e Corrente de Shockley (Aulas 10, 11 e 12)</h3>
+            <p>
+              • <strong>Barreira sob Polarização $V_a$ (Aula 10, Slide 3):</strong><br/>
+              $$V_j = V_{bi} - V_a \quad (V_a &gt; 0:\text{ Direta} \mid V_a &lt; 0:\text{ Reversa})$$
+              • <strong>Largura da Zona de Depleção (Aula 10, Slide 3):</strong><br/>
+              $$W = \sqrt{\frac{2\varepsilon_s}{q}\left(\frac{N_A + N_D}{N_A\,N_D}\right)(V_{bi} - V_a)}$$
+              • <strong>Equação de Shockley e Corrente de Saturação (Aula 11, Slide 6):</strong><br/>
+              $$I = I_S\left(e^{\frac{qV_a}{kT}} - 1\right), \quad I_S = A\,q\,n_i^2\left[\frac{D_p}{L_p\,N_D} + \frac{D_n}{L_n\,N_A}\right]$$
+              onde $L_p = \sqrt{D_p\tau_p}$, $L_n = \sqrt{D_n\tau_n}$ e $D = \frac{kT}{q}\mu$ (Relação de Einstein).
+            </p>
+          </div>
+
+          <div class="formula-box purple">
+            <h3>3. Capacitâncias e Chaveamento do Diodo (Aula 13)</h3>
+            <p>
+              • <strong>Capacitância de Junção / Depleção (Reversa - Aula 13, Slide 1):</strong><br/>
+              $$C_j = \frac{\varepsilon_s\,A}{W} = A\left[\frac{q\,\varepsilon_s\,N_A\,N_D}{2(N_A + N_D)(V_{bi} - V_a)}\right]^{1/2}$$
+              • <strong>Capacitância Difusiva (Direta - Aula 13, Slide 3):</strong><br/>
+              $$C_S = \frac{dQ_B}{dV_a} = \frac{q^2}{kT}A\,p_{0n}\,L_p\,e^{\frac{qV_a}{kT}}$$
+              • <strong>Tempo de Armazenamento no Turn-Off (Aula 13, Slide 6):</strong><br/>
+              $$t_s = \tau_p\ln\left[1 + \frac{I_F}{I_R}\right]$$
+            </p>
+          </div>
+
+          <div class="formula-box green">
+            <h3>4. Diodo Schottky e Capacitor MOS (Aula 14)</h3>
+            <p>
+              • <strong>Barreira Schottky e Built-in (Aula 14, Slide 3):</strong><br/>
+              $$q\varphi_B = q\varphi_m - q\chi_s \ (\text{fixa!}), \qquad qV_{bi} = q\varphi_m - q\varphi_s$$
+              • <strong>Emissão Termiônica no Schottky (Aula 14, Slide 5):</strong><br/>
+              $$I_D = I_S\left(e^{\frac{qV_D}{kT}} - 1\right), \qquad I_S = A\,A^*\,T^2\,e^{-\frac{q\varphi_B}{kT}}$$
+              • <strong>Capacitor MOS (Aula 14, Slides 11–19):</strong><br/>
+              $$C_{ox} = \frac{\varepsilon_{ox}}{t_{ox}}, \qquad \frac{1}{C_{HF}} = \frac{t_{ox}}{\varepsilon_{ox}} + \frac{w_d}{\varepsilon_s}$$
+              $$|Q_A| = |V_{FB}-V_G|C_{ox}, \quad |Q_I| = |V_G - V_T|C_{ox}$$
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- ABA 5: GALERIA DE ANIMAÇÕES PYTHON                                 -->
+    <!-- ================================================================== -->
+    <section id="tab-python" class="tab-section">
+      <div class="card">
+        <h2>🐍 Galeria de Animações Geradas em Python (`gerar_animacoes_python.py`)</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+          Todas as animações abaixo foram geradas na pasta <code>animacoes/</code> pelo script Python
+          <code>gerar_animacoes_python.py</code> utilizando <code>numpy</code>, <code>matplotlib.animation</code> e <code>Pillow</code>,
+          e os cálculos numéricos completos estão em <code>resolver_listas_mic01.py</code>.
+        </p>
+
+        <div class="gif-container">
+          <h3>1. Eletrostática da Junção P⁺N: Carga, Campo Elétrico, Potencial e Bandas (Lista 2 Q1, Q2d, Q3)</h3>
+          <img src="animacoes/anim_1_juncao_pn_eletrostatica.gif" alt="Animação 1" />
+        </div>
+
+        <div class="gif-container">
+          <h3>2. Injeção de Portadores Minoritários e Curva de Shockley (Lista 2 Q2)</h3>
+          <img src="animacoes/anim_2_injecao_correntes_pn.gif" alt="Animação 2" />
+        </div>
+
+        <div class="gif-container">
+          <h3>3. Capacitância da Zona de Depleção $C_j(V_a)$ e Linearização $1/C_j^2$ (Lista 2 Q4)</h3>
+          <img src="animacoes/anim_3_capacitancia_deplecao.gif" alt="Animação 3" />
+        </div>
+
+        <div class="gif-container">
+          <h3>4. Diodo Schottky Metal-Semicondutor: Barreiras e Efeito da Temperatura (Lista 3 Q1, Q2, Q3)</h3>
+          <img src="animacoes/anim_4_diodo_schottky.gif" alt="Animação 4" />
+        </div>
+
+        <div class="gif-container">
+          <h3>5. Capacitor MOS Completo: Regimes de Operação, Bandas e Curvas C–V LF/HF (Lista 3 Q4 a Q7)</h3>
+          <img src="animacoes/anim_5_capacitor_mos_regimes.gif" alt="Animação 5" />
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
